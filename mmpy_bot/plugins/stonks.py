@@ -14,7 +14,10 @@ def get_symbol(message):
 
     search_result = stock.find_symbol_name(name)
 
-    content = f"\n ### Symbol: {search_result['symbol']} \n#### Company Name: {search_result['name']}\n#### Exchange: {search_result['exchange']}\n"
+    content = f"""\n ### Symbol: {search_result['symbol']}
+#### Company Name: {search_result['name']}
+#### Exchange: {search_result['exchange']}
+"""
     message.reply_thread(content)
 
 
@@ -34,7 +37,6 @@ def get_info(message):
     stock_image = stock.plot_last_three_months(symbol, stock_info['currency'])
 
     content = f"""\n### Company Name: [{stock_info['name']}](https://finance.yahoo.com/quote/{symbol}])
-\
 ### Symbol: {symbol}
 
 | Previous Close |{stock_info['previous_close']}|
