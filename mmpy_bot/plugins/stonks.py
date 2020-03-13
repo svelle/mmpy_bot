@@ -12,13 +12,13 @@ def get_symbol(message):
     name = str(message.get_message().replace("get symbol ", ""))
     search_result = stock.find_symbol_name(name)
 
-    content = f"\n# Company Name: {search_result['name']}\n## Symbol: {search_result['symbol']}\n### Exchange: {search_result['exchange']} ({search_result['currency']})\n"
+    content = f"\n ### Symbol: {search_result['symbol']} \n#### Company Name: {search_result['name']}\n#### Exchange: {search_result['exchange']}\n"
     message.reply(content)
 
 
-@respond_to('get stock', re.IGNORECASE)
-def get_stock(message):
-    symbol = str(message.get_message()).replace("get stock ", "")
+@respond_to('get info', re.IGNORECASE)
+def get_info(message):
+    symbol = str(message.get_message()).replace("get info ", "")
 
     stock_info = stock.look_up_stock(symbol)
     stock_image = stock.plot_last_three_months(symbol)
