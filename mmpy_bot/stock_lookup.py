@@ -14,7 +14,7 @@ def look_up_stock(symbol: str):
         ask=f"{stock_data['ask']} {currency}",
         bid=f"{stock_data['bid']} {currency}",
         beta=round(beta, 2),
-        name=stock_data["longName"],
+        name=stock_data["shortName"],
         open=f"{stock_data['open']} {currency}",
         weeks_range=f"{round(stock_data['fiftyTwoWeekLow'], 2)} {currency} - {round(stock_data['fiftyTwoWeekHigh'], 2)} {currency}",
         days_range=f"{round(stock_data['dayLow'], 2)} {currency} - {round(stock_data['dayHigh'], 2)} {currency}",
