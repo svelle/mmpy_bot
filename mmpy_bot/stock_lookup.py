@@ -21,6 +21,7 @@ def look_up_stock(symbol: str):
         currency=currency,
         previous_close=f'{stock_data["previousClose"]} {currency}',
         dividend_rate=f"{stock_data['dividendRate']}%",
+        tradeable=f"{stock_data['tradeable']}",
     )
     return interesting_data
 

@@ -53,6 +53,10 @@ def get_info(message):
 
     stock_image = stock.plot_last_three_months(symbol, stock_info['currency'])
 
+    if stock_info['tradeable'] == 'False':
+        stock_info['bid'] = "Exchange closed"
+        stock_info['ask'] = "Exchange closed"
+
     content = ("\n"
                f"### Company Name: [{stock_info['name']}](https://finance.yahoo.com/quote/{symbol}])\n"
                f"### Symbol: {symbol}\n\n"
