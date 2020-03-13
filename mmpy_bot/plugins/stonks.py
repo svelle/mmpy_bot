@@ -23,19 +23,7 @@ def get_info(message):
     stock_info = stock.look_up_stock(symbol)
     stock_image = stock.plot_last_three_months(symbol)
 
-    # | ---------------- | --- |\n
-
-    content = f"""\n\n\
-    # {stock_info['name']}
-    ## {symbol}
-
-    | Previous Close |{stock_info['previous_close']}|\n
-    | Open           |{stock_info['open']}|\n
-    | Bid            |{stock_info['bid']}|\n
-    | Ask            |{stock_info['ask']}|\n
-    | Beta           |{stock_info['beta']}|\n
-    | Day's Range    |{stock_info['days_range']}|\n
-    | 52 Week Range  |{stock_info['weeks_range']}|"""
+    content = f"\n\n### {stock_info['name']}\n### {symbol}\n\n| Previous Close |{stock_info['previous_close']}|\n| ---------------- | --- |\n| Open           |{stock_info['open']}|\n| Bid            |{stock_info['bid']}|\n| Ask            |{stock_info['ask']}|\n| Beta           |{stock_info['beta']}|\n| Day's Range    |{stock_info['days_range']}|\n| 52 Week Range  |{stock_info['weeks_range']}|"
 
     file = open(stock_image, "rb")
     result = message.upload_file(file)

@@ -14,7 +14,7 @@ def look_up_stock(symbol):
         beta=stock_data["beta"],
         name=stock_data["longName"],
         open=stock_data["open"],
-        weeeks_range=f"{stock_data['fiftyTwoWeekLow']} - {stock_data['fiftyTwoWeekHigh']}",
+        weeks_range=f"{stock_data['fiftyTwoWeekLow']} - {stock_data['fiftyTwoWeekHigh']}",
         days_range=f"{stock_data['dayLow']} - {stock_data['dayHigh']}",
         currency=stock_data["currency"],
         previous_close=stock_data["previousClose"]
