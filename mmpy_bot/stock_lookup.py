@@ -1,4 +1,6 @@
 from yfinance import Ticker
+import json
+import requests
 
 
 def look_up_stock(symbol):
@@ -11,3 +13,19 @@ def look_up_stock(symbol):
         name=stock_data["longName"],
     )
     return interesting_data
+
+
+def find_symbol_name(query):
+    response = requests.get(
+        f"http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={query}&lang=en"
+    ).content
+    response = json.loads(response)
+    try:
+        symbol_candidate = response["ResultSet"]["Result"][0]
+    except IndexError:
+        return False
+    return dict(
+        symbol=symbol_candidate["symbol"],
+        name=symbol_candidate["name"],
+        exchange=symbol_candidate["exch"],
+    )
