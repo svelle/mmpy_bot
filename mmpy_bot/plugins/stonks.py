@@ -21,18 +21,18 @@ def help(message):
 
 @listen_to('get symbol', re.IGNORECASE)
 def get_symbol(message):
-    msg_inp = message.get_message().split()
-    name = str(msg_inp[-1])
+    search_string = message.get_message()[10:]
+    search_result = stock.lookup_symbol(search_string)
 
-    search_result = stock.find_symbol_name(name)
     if search_result:
         content = ("\n"
                    f"### Symbol: {search_result['symbol'].upper()}\n"
                    f"#### Company Name: {search_result['name']}\n"
-                   f"#### Exchange: {search_result['exchange']}\n"
+                   f"#### Region: {search_result['region']}\n"
+                   f"#### Currency: {search_result['currency']}\n"
                    )
     else:
-        content = (f"\n#### Couldn't find info for {name}, "
+        content = (f"\n#### Couldn't find info for {search_string.capitalize()}, "
                    "try another search string."
                    )
     message.reply_thread(content)
@@ -41,34 +41,38 @@ def get_symbol(message):
 @listen_to('get info', re.IGNORECASE)
 def get_info(message):
     msg_inp = message.get_message().split()
-    symbol = str(msg_inp[-1]).upper()
+    name = str(msg_inp[2]).upper()
 
-    try:
-        stock_info = stock.look_up_stock(symbol)
-    except IndexError:
-        message.reply_thread(
-            "\n## Symbol not found!\n### Trying lookup for queried Symbol...")
-        get_symbol(message)
+    if len(msg_inp) > 3:
+        days = int(msg_inp[-1])
+    else:
+        days = 90
+
+    stock_info = stock.lookup_stock(name)
+    if not stock_info:
+        message.reply_thread("\n# Error looking up stock.")
+        return
+    search_result = stock.lookup_symbol(name)
+    if not search_result:
+        message.reply_thread("\n# Error looking up stock.")
         return
 
-    stock_image = stock.plot_last_three_months(symbol, stock_info['currency'])
-
-    if stock_info['tradeable'] == 'False':
-        stock_info['bid'] = "Exchange closed"
-        stock_info['ask'] = "Exchange closed"
+    stock_image = stock.plot_last_three_months(stock_info['symbol'],
+                                               search_result['currency'], days)
 
     content = ("\n"
-               f"### Company Name: [{stock_info['name']}](https://finance.yahoo.com/quote/{symbol})\n"
-               f"### Symbol: {symbol}\n\n"
+               f"### Company Name: [{search_result['name']}](https://finance.yahoo.com/quote/{stock_info['symbol']})\n"
+               f"### Symbol: {stock_info['symbol']}\n\n"
+               f"### Price: {stock_info['price']}"
                "\n"
-               f"| Previous Close |{stock_info['previous_close']}|\n"
-               "| ---------------- | --- |\n"
-               f"| Open           |{stock_info['open']}|\n"
-               f"| Bid            |{stock_info['bid']}|\n"
-               f"| Ask            |{stock_info['ask']}|\n"
-               f"| Beta           |{stock_info['beta']}|\n"
-               f"| Day's Range    |{stock_info['days_range']}|\n"
-               f"| 52 Week Range  |{stock_info['weeks_range']}|\n"
+               f"| Daily Info         |    |\n"
+               "| ------------------- | --- |\n"
+               f"| Open               |{stock_info['open']}|\n"
+               f"| High               |{stock_info['high']}|\n"
+               f"| Low                |{stock_info['low']}|\n"
+               f"| Previous Close     |{stock_info['previous_close']}|\n"
+               f"| Change             |{stock_info['change']}|\n"
+               f"| Change %           |{stock_info['change_percent']}|\n"
                )
 
     file = open(stock_image, "rb")

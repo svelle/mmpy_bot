@@ -2,51 +2,57 @@ from yfinance import Ticker, download
 import json
 import requests
 from datetime import date, timedelta
+
+import mmpy_bot_settings as settings
+
+from alpha_vantage.timeseries import TimeSeries
 import matplotlib.pyplot as plt
 
-
-def look_up_stock(symbol: str):
-    ticker = Ticker(symbol)
-    stock_data = ticker.info
-    currency = stock_data["currency"]
-    beta = stock_data["beta"] if stock_data["beta"] is not None else 0
-    interesting_data = dict(
-        ask=f"{stock_data['ask']} {currency}",
-        bid=f"{stock_data['bid']} {currency}",
-        beta=round(beta, 2),
-        name=stock_data["shortName"],
-        open=f"{stock_data['open']} {currency}",
-        weeks_range=f"{round(stock_data['fiftyTwoWeekLow'], 2)} {currency} - {round(stock_data['fiftyTwoWeekHigh'], 2)} {currency}",
-        days_range=f"{round(stock_data['dayLow'], 2)} {currency} - {round(stock_data['dayHigh'], 2)} {currency}",
-        currency=currency,
-        previous_close=f'{stock_data["previousClose"]} {currency}',
-        dividend_rate=f"{stock_data['dividendRate']}%",
-        tradeable=f"{stock_data['tradeable']}",
-    )
-    return interesting_data
+ts = TimeSeries(key=settings.VANTAGE_KEY)
 
 
-def find_symbol_name(query: str):
-    response = requests.get(
-        f"http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={query}&lang=en"
-    ).content
-    response = json.loads(response)
+def lookup_stock(query: str):
     try:
-        symbol_candidate = response["ResultSet"]["Result"][0]
+        data = ts.get_quote_endpoint(query)[0]
     except IndexError:
         return False
+    print(data)
     return dict(
-        symbol=symbol_candidate["symbol"],
-        name=symbol_candidate["name"],
-        exchange=symbol_candidate["exch"],
+        symbol=data['01. symbol'],
+        open=data['02. open'],
+        high=data['03. high'],
+        low=data['04. low'],
+        price=data['05. price'],
+        volume=data['06. volume'],
+        lates_trading_day=data['07. latest trading day'],
+        previous_close=data['08. previous close'],
+        change=data['09. change'],
+        change_percent=data['10. change percent'],
     )
 
 
-def plot_last_three_months(symbol: str, currency="USD"):
+def lookup_symbol(query: str):
+    try:
+        data = ts.get_symbol_search(query)
+    except ValueError:
+        return False
+    if not data[0]:
+        return False
+    else:
+        data = data[0][0]
+    return dict(
+        symbol=data['1. symbol'],
+        name=data['2. name'],
+        region=data['4. region'],
+        currency=data['8. currency'],
+    )
+
+
+def plot_last_three_months(symbol: str, currency="USD", days=90):
     today = date.today()
-    three_months_ago = today - timedelta(days=90)
+    three_months_ago = today - timedelta(days)
     data = download(symbol, three_months_ago, today)
-    data["Adj Close"].plot(title=f"{symbol.upper()} - Last three months")
+    data["Adj Close"].plot(title=f"{symbol.upper()} - Last {days} days")
     plt.ylabel(currency)
     plt.savefig("plot.png")
     plt.clf()
