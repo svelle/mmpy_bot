@@ -5,56 +5,31 @@ import re
 from mmpy_bot.bot import listen_to
 from mmpy_bot.bot import respond_to
 
-
-@respond_to('hello$', re.IGNORECASE)
-def hello_reply(message):
-    message.reply('hello sender!')
+import mmpy_bot.stock_lookup as stock
 
 
-@respond_to('hello_formatting')
-@listen_to('hello_formatting$')
-def hello_reply_formatting(message):
-    # Format message with italic style
-    message.reply('_hello_ sender!')
-
-
-@listen_to('hello$')
-def hello_send(message):
-    message.send('hello channel!')
-
-
-@listen_to('hello_decorators')
-@respond_to('hello_decorators')
-def hello_decorators(message):
-    message.send('hello!')
-
-
-@respond_to('hello_web_api', re.IGNORECASE)
+@respond_to('get_stock', re.IGNORECASE)
 def web_api_reply(message):
-    attachments = [{
-        'fallback': 'Fallback text',
-        'author_name': 'Author',
-        'author_link': 'http://www.github.com',
-        'text': 'Some text here ...',
-        'color': '#59afe1'
-    }]
-    message.reply_webapi(
-        'Attachments example', attachments,
-        username='Mattermost-Bot',
-        icon_url='https://goo.gl/OF4DBq',
-    )
+    symbol = str(message.get_message()).replace("get_stock ", "")
 
+    stock_info = stock.look_up_stock(symbol)
+    stock_image = stock.plot_last_three_months(symbol)
 
-@listen_to('hello_comment', re.IGNORECASE)
-def hello_comment(message):
-    message.comment('some comments ...')
+    content = f"""\n\n\
+    | Previous Close |{stock_info['previous_close']}|\n
+    |----------------|---|\n
+    | Open           |{stock_info['open']}|\n
+    | Bid            |{stock_info['bid']}|\n
+    | Ask            |{stock_info['ask']}|\n
+    | Beta           |{stock_info['beta']}|\n
+    | Day's Range    |{stock_info['days_range']}|\n
+    | 52 Week Range  |{stock_info['weeks_range']}|"""
 
-
-@listen_to('hello_react', re.IGNORECASE)
-def hello_react(message):
-    message.react('+1')
-
-
-@listen_to('hello_reply_threaded', re.IGNORECASE)
-def hello_reply_threaded(message):
-    message.reply_thread('hello threaded!')
+    file = open(stock_image, "rb")
+    result = message.upload_file(file)
+    file.close()
+    if 'file_infos' not in result:
+        message.reply('upload file error')
+    file_id = result['file_infos'][0]['id']
+    # file_id need convert to array
+    message.reply(content, [file_id])
