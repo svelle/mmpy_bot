@@ -5,7 +5,7 @@ from datetime import date, timedelta
 import matplotlib.pyplot as plt
 
 
-def look_up_stock(symbol):
+def look_up_stock(symbol: str):
     ticker = Ticker(symbol)
     stock_data = ticker.info
     currency = stock_data["currency"]
@@ -24,7 +24,7 @@ def look_up_stock(symbol):
     return interesting_data
 
 
-def find_symbol_name(query):
+def find_symbol_name(query: str):
     response = requests.get(
         f"http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={query}&lang=en"
     ).content
@@ -40,11 +40,11 @@ def find_symbol_name(query):
     )
 
 
-def plot_last_three_months(symbol, currency="US-Dollar"):
+def plot_last_three_months(symbol: str, currency="USD"):
     today = date.today()
     three_months_ago = today - timedelta(days=90)
     data = download(symbol, three_months_ago, today)
-    data["Adj Close"].plot(title=f"{symbol} - Last three months")
+    data["Adj Close"].plot(title=f"{symbol.upper()} - Last three months")
     plt.ylabel(currency)
     plt.savefig("plot.png")
     plt.clf()
