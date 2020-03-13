@@ -17,6 +17,7 @@ def look_up_stock(symbol):
         weeeks_range=f"{stock_data['fiftyTwoWeekLow']} - {stock_data['fiftyTwoWeekHigh']}",
         days_range=f"{stock_data['dayLow']} - {stock_data['dayHigh']}",
         currency=stock_data["currency"],
+        previous_close=stock_data["previousClose"]
     )
     return interesting_data
 
