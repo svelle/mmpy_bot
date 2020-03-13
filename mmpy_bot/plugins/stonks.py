@@ -7,17 +7,29 @@ from mmpy_bot.bot import respond_to
 
 import mmpy_bot.stock_lookup as stock
 
+@respond_to('get symbol',  re.IGNORECASE)
+def get_symbol(message):
+    name = str(message.get_message().replace("get symbol ", ""))
+    search_result = stock.find_symbol_name(name)
 
-@respond_to('get_stock', re.IGNORECASE)
-def web_api_reply(message):
-    symbol = str(message.get_message()).replace("get_stock ", "")
+    content = f"\n# Company Name: {search_result['name']}\n## Symbol: {search_result['symbol']}\n### Exchange: {search_result['exchange']} ({search_result['currency']})\n"
+    message.reply(content)
+
+
+@respond_to('get stock', re.IGNORECASE)
+def get_stock(message):
+    symbol = str(message.get_message()).replace("get stock ", "")
 
     stock_info = stock.look_up_stock(symbol)
     stock_image = stock.plot_last_three_months(symbol)
 
+    # | ---------------- | --- |\n
+
     content = f"""\n\n\
+    # {stock_info['name']}
+    ## {symbol}
+
     | Previous Close |{stock_info['previous_close']}|\n
-    |----------------|---|\n
     | Open           |{stock_info['open']}|\n
     | Bid            |{stock_info['bid']}|\n
     | Ask            |{stock_info['ask']}|\n
