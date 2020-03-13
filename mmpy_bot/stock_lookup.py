@@ -8,16 +8,18 @@ import matplotlib.pyplot as plt
 def look_up_stock(symbol):
     ticker = Ticker(symbol)
     stock_data = ticker.info
+    currency = stock_data["currency"]
     interesting_data = dict(
-        ask=stock_data["ask"],
-        bid=stock_data["bid"],
+        ask=f"{stock_data['ask']} {currency}",
+        bid=f"{stock_data['bid']} {currency}",
         beta=stock_data["beta"],
         name=stock_data["longName"],
         open=stock_data["open"],
-        weeeks_range=f"{stock_data['fiftyTwoWeekLow']} - {stock_data['fiftyTwoWeekHigh']}",
-        days_range=f"{stock_data['dayLow']} - {stock_data['dayHigh']}",
-        currency=stock_data["currency"],
-        previous_close=stock_data["previousClose"]
+        weeeks_range=f"{round(stock_data['fiftyTwoWeekLow'], 2)} {currency} - {round(stock_data['fiftyTwoWeekHigh'], 2)} {currency}",
+        days_range=f"{round(stock_data['dayLow'], 2)} {currency} - {round(stock_data['dayHigh'], 2)} {currency}",
+        currency=currency,
+        previous_close=stock_data["previousClose"],
+        dividend_rate=f"{stock_data['dividendRate']}%",
     )
     return interesting_data
 
