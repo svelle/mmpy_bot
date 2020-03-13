@@ -18,7 +18,7 @@ def look_up_stock(symbol):
         weeks_range=f"{round(stock_data['fiftyTwoWeekLow'], 2)} {currency} - {round(stock_data['fiftyTwoWeekHigh'], 2)} {currency}",
         days_range=f"{round(stock_data['dayLow'], 2)} {currency} - {round(stock_data['dayHigh'], 2)} {currency}",
         currency=currency,
-        previous_close=f'stock_data["previousClose"] {currency}',
+        previous_close=f'{stock_data["previousClose"]} {currency}',
         dividend_rate=f"{stock_data['dividendRate']}%",
     )
     return interesting_data
