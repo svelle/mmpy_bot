@@ -58,7 +58,7 @@ def get_info(message):
         stock_info['ask'] = "Exchange closed"
 
     content = ("\n"
-               f"### Company Name: [{stock_info['name']}](https://finance.yahoo.com/quote/{symbol}])\n"
+               f"### Company Name: [{stock_info['name']}](https://finance.yahoo.com/quote/{symbol})\n"
                f"### Symbol: {symbol}\n\n"
                "\n"
                f"| Previous Close |{stock_info['previous_close']}|\n"
