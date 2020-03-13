@@ -14,11 +14,11 @@ def look_up_stock(symbol):
         bid=f"{stock_data['bid']} {currency}",
         beta=stock_data["beta"],
         name=stock_data["longName"],
-        open=stock_data["open"],
+        open=f"stock_data['open'] {currency}",
         weeeks_range=f"{round(stock_data['fiftyTwoWeekLow'], 2)} {currency} - {round(stock_data['fiftyTwoWeekHigh'], 2)} {currency}",
         days_range=f"{round(stock_data['dayLow'], 2)} {currency} - {round(stock_data['dayHigh'], 2)} {currency}",
         currency=currency,
-        previous_close=stock_data["previousClose"],
+        previous_close=f'stock_data["previousClose"] {currency}',
         dividend_rate=f"{stock_data['dividendRate']}%",
     )
     return interesting_data
@@ -47,4 +47,5 @@ def plot_last_three_months(symbol, currency="US-Dollar"):
     data["Adj Close"].plot(title=f"{symbol} - Last three months")
     plt.ylabel(currency)
     plt.savefig("plot.png")
+    plt.clf()
     return "plot.png"
